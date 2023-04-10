@@ -11,32 +11,43 @@ const STORAGE_KEY = 'feedback-form-state';
 const savedData = localStorage.getItem(STORAGE_KEY, JSON.stringify(formData));
 const parsedData = JSON.parse(savedData);
 
+entryFormInput();
+
 refs.form.addEventListener('submit', onFormSubmit);
-refs.form.addEventListener('input', throttle(onInput, 500));
-
-refs.form.addEventListener('input', evt => {
+refs.form.addEventListener('input', throttle((evt) => {
 	formData[evt.target.name] = evt.target.value;
-})
+	localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+}, 500));
 
-entryFormInput()
-
-function onInput() {
-	return localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
-}
 
 function onFormSubmit(evt) {
 	evt.preventDefault();
 
 	console.log(formData);
+		  
+	if (refs.email.value === "" || refs.textarea.value === "") {
+        alert ('Ви незаповнили форму')
+	}
+	
 	evt.currentTarget.reset();
 	localStorage.removeItem(STORAGE_KEY);
+
+
 }
 
+
 function entryFormInput() {
-	const savedlocalStorage = localStorage.getItem(STORAGE_KEY);
+	try {
+ const savedlocalStorage = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
 	if (savedlocalStorage) {
-		refs.form.email.value = parsedData.email;
+		refs.email.value = parsedData.email;
 		refs.form.message.value = parsedData.message;
+		
 	}
+} catch (error) {
+		console.log(error.name);
+}
+	
+	
 }
